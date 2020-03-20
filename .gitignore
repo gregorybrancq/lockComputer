@@ -6,7 +6,7 @@ __pycache__/
 *$py.class
 
 # vim swap files
-*.swp
+*.sw[po]
 
 # C extensions
 *.so
