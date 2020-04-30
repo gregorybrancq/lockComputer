@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 sys.path.append('/home/greg/Greg/work/env/pythonCommon')
 from progDisEn import ProgEnDis
-from basic import getScriptDir, getLogDir
+from basic import getCommonDir, getLogDir
 
 ##############################################
 #              Line Parsing                  #
@@ -83,12 +83,12 @@ parser.add_option(
 progName = "computerLock"
 
 # directory
-scriptDir = getScriptDir()
+commonDir = getCommonDir()
 logDir = getLogDir()
 
 # logging
 # load config
-logging.config.fileConfig(os.path.join(scriptDir, 'logging.conf'))
+logging.config.fileConfig(os.path.join(commonDir, 'logging.conf'))
 # disable logging
 logging.disable(sys.maxsize)
 # create logger
