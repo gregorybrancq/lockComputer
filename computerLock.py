@@ -312,6 +312,8 @@ def main():
                     if not (os.path.isfile(runningBackupFile)):
                         hardware_elts.block()
                         suspend()
+                    else :
+                        logger.info("Backup is running.\n")
             elif ts.checkBeforeTS():
                 message()
             else:
