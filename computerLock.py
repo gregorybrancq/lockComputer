@@ -159,7 +159,8 @@ class Hardware:
 
     def getId(self):
         try:
-            self.id = subprocess.check_output(["xinput", "list", "--id-only", str(self.full)]).strip()
+            id_bytes = subprocess.check_output(["xinput", "list", "--id-only", str(self.full)]).strip()
+            self.id = id_bytes.decode()
         except subprocess.CalledProcessError:
             logger.error("In getId : error with " + str(self.short))
 
@@ -184,10 +185,8 @@ class TimeSlot:
         return res
 
     def sortUserSlot(self):
-        user_sort = userSlot[self.curDOW][1].keys()
-        logger.debug("UserTime before sort =" + str(user_sort))
-        user_sort.sort(reverse=True)
-        logger.debug("UserTime after sort =" + str(user_sort))
+        user_sort = sorted(userSlot[self.curDOW][1].keys(), reverse=True)
+        logger.debug("UserTime after sort = %s" % str(user_sort))
         return user_sort
 
     # Check if current time + 4mn is in timeSlot defined by user
@@ -200,17 +199,19 @@ class TimeSlot:
         for user_time in self.sortUserSlot():
             logger.debug("Check user time slot user_time=" + str(user_time))
             if cur_time5 > user_time:
+                logger.debug("cur_time5 (%s) > user_time (%s)" % (str(cur_time5), str(user_time)))
                 return userSlot[self.curDOW][1][user_time]
 
     # Check if datetime is in timeSlot defined by user
     def inTS(self):
         logger.info("Check time slot")
         cur_time = time.strftime("%H:%M")
-        logger.debug("Check real time slot cur_time =" + str(cur_time))
+        logger.debug("Check real time slot cur_time = %s" % str(cur_time))
         logger.debug("Check user times=" + str(userSlot[self.curDOW][1]))
         for user_time in self.sortUserSlot():
-            logger.debug("Check user time slot user_time=" + str(user_time))
+            logger.debug("Check user time slot user_time = %s" % str(user_time))
             if cur_time > user_time:
+                logger.debug("cur_time (%s) > user_time (%s)" % (str(cur_time), str(user_time)))
                 return userSlot[self.curDOW][1][user_time]
 
 
