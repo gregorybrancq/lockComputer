@@ -10,7 +10,7 @@ from logging.handlers import RotatingFileHandler
 from optparse import OptionParser
 
 sys.path.append('/home/greg/Greg/work/env/pythonCommon')
-from progDisEn import ProgEnDis
+from program import Program
 from basic import getLogDir
 
 ##############################################
@@ -20,7 +20,6 @@ from basic import getLogDir
 progName = "computerLock"
 
 # configuration files
-disableFile = os.path.join("/tmp", progName + ".disable")
 runningBackupFile = os.path.join("/tmp/backupNight.running")
 
 # True will suspend pc
@@ -254,16 +253,13 @@ def suspend():
 
 
 def message():
-    logger.info("Echo user")
+    logger.info("Display message to prevent user")
     subprocess.call(['zenity', '--info', '--timeout=300', '--no-wrap',
                      '--text=Il est temps d\'aller faire dodo\nT\'as 5mn avant l\'extinction des feux…'])
 
 
 def printInfo():
-    locution = ""
-    if not os.path.isfile(disableFile):
-        locution = " not"
-    print("The disable file (%s) is%s present.\n" % (disableFile, locution))
+    print(program.getInfo())
     print("True will suspend the PC.")
     for (day, timeList) in userSlot:
         print("    %s : %s" % (str(day), str(timeList)))
@@ -287,26 +283,24 @@ def main():
     # ["mouseHanna", "pointer:Logitech M505/B605"])
     logger.debug("Hardwares :\n" + str(hardware_elts))
 
-    enable_disable = ProgEnDis(disable_file=disableFile)
-
     if parsed_args.block:
         hardware_elts.block()
     elif parsed_args.unblock:
         hardware_elts.unblock()
     elif parsed_args.enable:
-        enable_disable.progEnable()
+        program.progEnable()
     elif parsed_args.disable:
-        enable_disable.progDisable()
+        program.progDisable()
     elif parsed_args.info:
         printInfo()
     else:
-        if enable_disable.isEnable():
+        if program.isEnable():
             ts = TimeSlot()
             logger.debug("TimeSlot :\n" + str(ts))
             if ts.inTS():
                 # when lock file was created after the TS
                 # this trick to have the user message
-                if enable_disable.isJustRemoveFile():
+                if program.isJustRemoveFile():
                     message()
                 else:
                     if not (os.path.isfile(runningBackupFile)):
@@ -325,4 +319,5 @@ def main():
 
 if __name__ == '__main__':
     logger = createLog(progName)
+    program = Program(prog_name=progName)
     main()
