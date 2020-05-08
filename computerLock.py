@@ -10,8 +10,8 @@ from logging.handlers import RotatingFileHandler
 from optparse import OptionParser
 
 sys.path.append('/home/greg/Greg/work/env/pythonCommon')
+from log_and_parse import createLog
 from program import Program
-from basic import getLogDir
 
 ##############################################
 # Global variables
@@ -164,14 +164,14 @@ class Hardware:
             logger.error("In getId : error with " + str(self.short))
 
     def block(self):
-        logger.info("In  block " + self.short)
-        subprocess.call(["xinput", "disable", str(self.id)])
-        logger.info("Out block")
+        if self.id != 0 :
+            subprocess.call(["xinput", "disable", str(self.id)])
+            logger.info("Block " + self.short)
 
     def unblock(self):
-        logger.info("In  unblock " + self.short)
-        subprocess.call(["xinput", "enable", str(self.id)])
-        logger.info("Out unblock")
+        if self.id != 0 :
+            subprocess.call(["xinput", "enable", str(self.id)])
+            logger.info("Unblock " + self.short)
 
 
 class TimeSlot:
@@ -221,32 +221,6 @@ class TimeSlot:
 #                FUNCTIONS                   #
 ##############################################
 
-def createLog(log_name):
-    global logger
-    # Create logger
-    if not os.path.isdir(getLogDir()):
-        os.mkdir(getLogDir())
-    # create logger
-    logger = logging.getLogger(log_name)
-    logger.setLevel(logging.DEBUG)
-    # create file handler which logs even debug messages
-    fh = RotatingFileHandler(os.path.join(getLogDir(), '%s.log' % log_name), mode='a', maxBytes=5 * 1024 * 1024,
-                             backupCount=2, delay=False)
-    fh.setLevel(logging.DEBUG)
-    # create console handler with a higher log level
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(levelname)-7s - %(name)s - %(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    # add the handlers to the logger
-    logger.addHandler(fh)
-    if parsed_args.debug:
-        logger.addHandler(ch)
-    return logger
-
-
 def suspend():
     logger.info("Suspend machine")
     subprocess.call(["systemctl", "suspend"])
@@ -279,8 +253,6 @@ def main():
     # To get the good names : xinput list
     hardware_elts.init(["keyboard", "keyboard:Logitech MK700"],
                        ["mouseJuju", "pointer:MOSART Semi. 2.4G Wireless Mouse"])
-    # ["mouseJuju", "pointer:MOSART Semi. 2.4G Wireless Mouse"], \
-    # ["mouseHanna", "pointer:Logitech M505/B605"])
     logger.debug("Hardwares :\n" + str(hardware_elts))
 
     if parsed_args.block:
@@ -311,13 +283,13 @@ def main():
             elif ts.checkBeforeTS():
                 message()
             else:
-                logger.info("not in a suspend time slot")
+                logger.info("Not in a suspend time slot")
                 # hardware_elts.unblock()
 
     logger.info("STOP")
 
 
 if __name__ == '__main__':
-    logger = createLog(progName)
+    logger = createLog(progName, parsed_args)
     program = Program(prog_name=progName)
     main()
