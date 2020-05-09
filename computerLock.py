@@ -188,17 +188,15 @@ class TimeSlot:
         logger.debug("UserTime after sort = %s" % str(user_sort))
         return user_sort
 
-    # Check if current time + 4mn is in timeSlot defined by user
+    # Check if current time + 6mn is in timeSlot defined by user
     def checkBeforeTS(self):
         logger.info("Check before time slot")
-        cur_t5 = datetime.now() + timedelta(minutes=4)
-        cur_time5 = format(cur_t5, '%H:%M')
-        logger.debug("Check real time slot cur_time5=" + str(cur_time5))
-        logger.debug("Check user times=" + str(userSlot[self.curDOW][1]))
+        cur_time_plus_timedelta = datetime.now() + timedelta(minutes=6)
+        cur_time_plus_delta = format(cur_time_plus_timedelta, '%H:%M')
+        logger.debug("Check real time slot cur_time_plus_delta = %s" % str(cur_time_plus_delta))
         for user_time in self.sortUserSlot():
-            logger.debug("Check user time slot user_time=" + str(user_time))
-            if cur_time5 > user_time:
-                logger.debug("cur_time5 (%s) > user_time (%s)" % (str(cur_time5), str(user_time)))
+            if cur_time_plus_delta > user_time:
+                logger.debug("cur_time_plus_delta (%s) > user_time (%s)" % (str(cur_time_plus_delta), str(user_time)))
                 return userSlot[self.curDOW][1][user_time]
 
     # Check if datetime is in timeSlot defined by user
