@@ -286,7 +286,7 @@ def main():
                 logger.info("Not in a suspend time slot")
                 # hardware_elts.unblock()
 
-    logger.info("STOP")
+    logger.info("STOP\n")
 
 
 if __name__ == '__main__':
