@@ -227,7 +227,8 @@ def suspend():
 def message():
     logger.info("Display message to prevent user")
     subprocess.call(['zenity', '--info', '--timeout=300', '--no-wrap',
-                     '--text=Il est temps d\'aller faire dodo\nT\'as 5mn avant l\'extinction des feux…'])
+                     '--text=Il est temps d\'aller faire dodo\nT\'as 5mn avant l\'extinction des feux…'],
+                     stderr=subprocess.DEVNULL)
 
 
 def printInfo():
