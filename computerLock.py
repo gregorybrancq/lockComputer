@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from logging.handlers import RotatingFileHandler
 from optparse import OptionParser
 
-sys.path.append('/home/greg/Greg/work/env/pythonCommon')
+sys.path.append('/home/greg/Config/env/pythonCommon')
 from log_and_parse import createLog
 from program import Program
 
