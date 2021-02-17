@@ -1,23 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import logging
 import os.path
 import subprocess
 import sys
 import time
 from datetime import datetime, timedelta
-from logging.handlers import RotatingFileHandler
 from optparse import OptionParser
 
 sys.path.append('/home/greg/Config/env/pythonCommon')
-from log_and_parse import createLog
+from log import LogClass
 from program import Program
 
 ##############################################
 # Global variables
 ##############################################
 
-progName = "computerLock"
+prog_name = "computerLock"
 
 # configuration files
 runningBackupFile = os.path.join("/tmp/backupNight.running")
@@ -37,15 +35,14 @@ runningBackupFile = os.path.join("/tmp/backupNight.running")
 
 # Work week
 userSlot = [
-    ["lundi",    {"00:00": True, "06:00": False, "23:45": True}],
-    ["mardi",    {"00:00": True, "06:00": False, "23:45": True}],
+    ["lundi", {"00:00": True, "06:00": False, "23:45": True}],
+    ["mardi", {"00:00": True, "06:00": False, "23:45": True}],
     ["mercredi", {"00:00": True, "06:00": False, "23:45": True}],
-    ["jeudi",    {"00:00": True, "06:00": False, "23:45": True}],
+    ["jeudi", {"00:00": True, "06:00": False, "23:45": True}],
     ["vendredi", {"00:00": True, "06:00": False}],
-    ["samedi",   {"00:00": False, "02:00": True, "07:00": False}],
+    ["samedi", {"00:00": False, "02:00": True, "07:00": False}],
     ["dimanche", {"00:00": False, "02:00": True, "07:00": False, "23:45": True}]
 ]
-
 
 ##############################################
 #              Line Parsing                  #
@@ -164,12 +161,12 @@ class Hardware:
             logger.error("In getId : error with " + str(self.short))
 
     def block(self):
-        if self.id != 0 :
+        if self.id != 0:
             subprocess.call(["xinput", "disable", str(self.id)])
             logger.info("Block " + self.short)
 
     def unblock(self):
-        if self.id != 0 :
+        if self.id != 0:
             subprocess.call(["xinput", "enable", str(self.id)])
             logger.info("Unblock " + self.short)
 
@@ -228,7 +225,7 @@ def message():
     logger.info("Display message to prevent user")
     subprocess.call(['zenity', '--info', '--timeout=300', '--no-wrap',
                      '--text=Il est temps d\'aller faire dodo\nT\'as 5mn avant l\'extinction des feux…'],
-                     stderr=subprocess.DEVNULL)
+                    stderr=subprocess.DEVNULL)
 
 
 def printInfo():
@@ -277,7 +274,7 @@ def main():
                     if not (os.path.isfile(runningBackupFile)):
                         hardware_elts.block()
                         suspend()
-                    else :
+                    else:
                         logger.info("Backup is running.\n")
             elif ts.checkBeforeTS():
                 message()
@@ -289,6 +286,7 @@ def main():
 
 
 if __name__ == '__main__':
-    logger = createLog(progName, parsed_args)
-    program = Program(prog_name=progName)
+    logC = LogClass(prog_name, parsed_args.debug)
+    logger = logC.getLogger()
+    program = Program(prog_name=prog_name)
     main()
