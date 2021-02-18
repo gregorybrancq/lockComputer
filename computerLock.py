@@ -7,7 +7,7 @@ import time
 from datetime import datetime, timedelta
 from optparse import OptionParser
 
-sys.path.append('/home/greg/Config/env/pythonCommon')
+sys.path.append('/home/greg/Tools/env/pythonCommon')
 from log import LogClass
 from program import Program
 
